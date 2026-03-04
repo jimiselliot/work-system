@@ -1,43 +1,35 @@
-const path = require('path');
 const mysql = require('mysql2/promise');
-const bcrypt = require('bcryptjs');
 
-// ✅ FIRST: Load environment variables BEFORE using them
-require('dotenv').config({ path: path.join(__dirname, '../../.env') });
+// Load env for local dev; Railway provides these automatically in production
+require('dotenv').config({ path: '../../.env' });
 
-console.log('🔧 Database Configuration:');
-console.log('  Host:', process.env.DB_HOST || 'localhost');
-console.log('  User:', process.env.DB_USER || 'jim');
-console.log('  Database:', process.env.DB_NAME || 'work_system');
-console.log('  Password:', process.env.DB_PASSWORD ? '***' : '(empty)');
-
-// Create the connection pool with enhanced settings
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'jim',
-  password: process.env.DB_PASSWORD || 'root',
-  database: process.env.DB_NAME || 'work_system',
-  port: process.env.DB_PORT || 3306,
-  
-  // Connection pool settings
+  host: process.env.DB_HOST || process.env.MYSQLHOST || 'localhost',
+  user: process.env.DB_USER || process.env.MYSQLUSER || 'jim',
+  password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || 'root',
+  database: process.env.DB_NAME || process.env.MYSQLDATABASE || 'work_system',
+  port: process.env.DB_PORT || process.env.MYSQLPORT || 3306,
+
   waitForConnections: true,
   connectionLimit: 20,
   queueLimit: 0,
   enableKeepAlive: true,
   keepAliveInitialDelay: 10000,
-  
-  // Connection settings
+
   charset: 'utf8mb4',
   timezone: 'Z',
   dateStrings: true,
-  
-  // Debug
   debug: false,
-  
-  // Support for named placeholders
   namedPlaceholders: true
 });
 
+console.log('🔧 Database Configuration:');
+console.log('  Host:', process.env.DB_HOST || process.env.MYSQLHOST || 'localhost');
+console.log('  User:', process.env.DB_USER || process.env.MYSQLUSER || 'jim');
+console.log('  Database:', process.env.DB_NAME || process.env.MYSQLDATABASE || 'work_system');
+console.log('  Password:', process.env.DB_PASSWORD || process.env.MYSQLPASSWORD ? '***' : '(empty)');
+
+module.exports = pool;
 // ============================================
 // 1. DATABASE SETUP FUNCTIONS (Auto-creates everything)
 // ============================================
