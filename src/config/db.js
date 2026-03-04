@@ -1,14 +1,31 @@
 const mysql = require('mysql2/promise');
+const bcrypt = require('bcryptjs');
 
-// Load env for local dev; Railway provides these automatically in production
-require('dotenv').config({ path: '../../.env' });
+// ============================================
+// 0. ENVIRONMENT VARIABLES (Local Dev + Railway)
+// ============================================
 
+// Only load .env in local dev
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ path: '../../.env' });
+}
+
+// Pick DB config using Railway fallback
+const DB_HOST = process.env.DB_HOST || process.env.MYSQLHOST || 'localhost';
+const DB_USER = process.env.DB_USER || process.env.MYSQLUSER || 'jim';
+const DB_PASSWORD = process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || 'root';
+const DB_NAME = process.env.DB_NAME || process.env.MYSQLDATABASE || 'work_system';
+const DB_PORT = process.env.DB_PORT || process.env.MYSQLPORT || 3306;
+
+// ============================================
+// 1. CREATE CONNECTION POOL
+// ============================================
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || process.env.MYSQLHOST || 'localhost',
-  user: process.env.DB_USER || process.env.MYSQLUSER || 'jim',
-  password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || 'root',
-  database: process.env.DB_NAME || process.env.MYSQLDATABASE || 'work_system',
-  port: process.env.DB_PORT || process.env.MYSQLPORT || 3306,
+  host: DB_HOST,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_NAME,
+  port: DB_PORT,
 
   waitForConnections: true,
   connectionLimit: 20,
@@ -24,10 +41,10 @@ const pool = mysql.createPool({
 });
 
 console.log('🔧 Database Configuration:');
-console.log('  Host:', process.env.DB_HOST || process.env.MYSQLHOST || 'localhost');
-console.log('  User:', process.env.DB_USER || process.env.MYSQLUSER || 'jim');
-console.log('  Database:', process.env.DB_NAME || process.env.MYSQLDATABASE || 'work_system');
-console.log('  Password:', process.env.DB_PASSWORD || process.env.MYSQLPASSWORD ? '***' : '(empty)');
+console.log('  Host:', DB_HOST);
+console.log('  User:', DB_USER);
+console.log('  Database:', DB_NAME);
+console.log('  Password:', DB_PASSWORD ? '***' : '(empty)');
 
 module.exports = pool;
 // ============================================
