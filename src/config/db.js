@@ -46,7 +46,6 @@ console.log('  User:', DB_USER);
 console.log('  Database:', DB_NAME);
 console.log('  Password:', DB_PASSWORD ? '***' : '(empty)');
 
-module.exports = pool;
 // ============================================
 // 1. DATABASE SETUP FUNCTIONS (Auto-creates everything)
 // ============================================
